@@ -1,0 +1,209 @@
+#include <iostream>
+#include <string>
+using namespace std;
+
+class Node {
+public:
+    int Cantidad;
+    string Cliente;
+    int Precio;
+    string Producto;
+    int importe;
+    Node* next;
+};
+
+class LinkedList {
+private:
+    Node* first;
+public:
+    LinkedList() {
+        first = nullptr;
+    }
+    LinkedList(int Cantidades[], string Clientes[], int Precios[], string Productos[], int n);
+    //~LinkedList();
+    void display();
+    void insert(int A[], int n);
+    //void remove (int A[], int n);
+    //void search (int A[], int n);
+    int length();
+    Node *mayor();
+    Node *menor();
+    void insert(int index, int Cant, string Clien, int Preci, string Produc);
+    int deleteNode(int index,int &Cant,string &Clien, int &Preci, string &Produc);
+    int TotalImporte();
+    int TotalCantidad();
+
+
+};
+
+LinkedList::LinkedList(int Cantidades[], string Clientes[], int Precios[], string Productos[], int n) {
+    Node* t, * last;
+    first = new Node();
+    first->Cantidad =Cantidades[0] ;
+    first->Cliente = Clientes[0];
+    first->Precio = Precios[0];
+    first->Producto = Productos[0];
+    first->importe=first->Cantidad*first->Precio;
+    first->next = nullptr;
+    last = first;
+    for (int i = 1; i < n; i++) {
+        t = new Node();
+        t->Cantidad = Cantidades[i];
+        t->Cliente = Clientes[i];
+        t->Precio = Precios[i];
+        t->Producto = Productos[i];
+        t->importe=t->Cantidad*t->Precio;
+        last->next = t;
+        last = t;
+    }
+}
+void LinkedList::display() {
+    Node* p = first;
+    cout << "Cliente\tProductos\tCantidad\tPrecio\tImporte" << endl;
+    while (p) {
+
+        cout << p->Cliente<<" \t"<<p->Producto <<"\t"<<p->Cantidad<<"\t"<<p->Precio<<"\t"<<p->importe<< endl;
+        p = p->next;
+    }
+}
+
+int LinkedList::length() {
+    Node* p = first;
+    int contador = 0;
+    while (p) {
+        contador = contador + 1;
+        p = p->next;
+    }
+    return contador;
+}
+
+Node *LinkedList::mayor() {
+    Node* p = first;
+    Node *maximo=first;
+    while (p) {
+        if (p->importe > maximo->importe)
+            maximo = p;
+        p = p->next;
+    }
+    return maximo;
+}
+Node *LinkedList::menor() {
+    Node* p = first;
+    Node *minimo = first;
+    while (p) {
+        if (p->importe< minimo->importe)
+            minimo = p;
+        p = p->next;
+    }
+    return minimo;
+}
+void LinkedList::insert(int index, int Cant, string Clien, int Preci, string Produc) {
+    Node* t, * p = first;
+    int contador = 0;
+    if (index < 0 || length() < index) {
+        cout << "Index is out of bounds" << endl;
+        return;
+    }
+    t = new Node();
+    t->Cantidad = Cant;
+    t->Cliente = Clien;
+    t->Precio = Preci;
+    t->Producto = Produc;
+    t->importe=t->Precio*t->Cantidad;
+    t->next = nullptr;
+    if (index == 0) {
+        t->next = first;
+        first = t;
+    }
+    else {
+        for (int i = 0; i < index - 1; i++) {
+            p->next;
+        }
+        t->next = p->next;
+        p->next = t;
+    }
+
+}
+
+int LinkedList::deleteNode(int index, int &Cant, string &Clien, int &Preci, string &Produc) {
+    Node* p, * q = nullptr;
+    int x=0;
+    if (index<1 || index>length()) {
+        return -1;
+    }
+    if (index == 1) {
+        p = first;
+        first = first->next;
+        Cant = p->Cantidad;
+        Clien = p->Cliente;
+        Preci = p->Precio;
+        Produc = p->Producto;
+        delete p;
+    }
+    else {
+        p = first;
+        for (int i = 0; i < index - 1; i++) {
+            q = p;
+            p = p->next;
+        }
+        q->next = p->next;
+        Cant = p->Cantidad;
+        Clien = p->Cliente;
+        Preci = p->Precio;
+        Produc = p->Producto;
+        delete p;
+    }
+    return x;
+}
+
+int LinkedList::TotalCantidad(){
+    int totalcant=0;
+    Node *temp=new Node;
+    temp=first;
+    while(temp){
+        totalcant=totalcant+temp->Cantidad;
+        temp=temp->next;
+    }
+    return totalcant;
+}
+int LinkedList::TotalImporte(){
+ int totalimp=0;
+    Node *temp=new Node;
+    temp=first;
+    while(temp){
+        totalimp=totalimp+temp->importe;
+        temp=temp->next;
+    }
+    return totalimp;
+}
+
+int main() {
+    int A[] = { 2,1,4,3 };
+    string Clientes[] = { "Luis","Pepe","Maria","Carlos" };
+    int Precio[] = { 7000,8000,7000,8000 };
+    string Producto[] = { "Celular","Tablet","Celular","Tablet" };
+    int n = sizeof(A) / sizeof(A[0]);
+    int Cant, prec;
+    string Client, Produc;
+    Node *Maximo,*Minimo;
+    LinkedList lista(A, Clientes, Precio,Producto, n);
+    Maximo=lista.mayor();
+    Minimo=lista.menor();
+    //cout << "El tamaño de la lista es: " << lista.length() << endl;
+    lista.display();
+    cout<<"Total importe:"<<lista.TotalImporte()<<" Total cantidad:"<<lista.TotalCantidad()<<endl;
+    cout << "El cliente con mayor compra es: " << Maximo->Cliente<<"con: "<<Maximo->importe << endl;
+    cout << "El cliente con menor compra es: " << Minimo->Cliente<<"con: "<<Minimo->importe << endl;
+    cout<<"El promedio es:"<<lista.TotalImporte()/lista.TotalCantidad();
+
+    /*if (lista.deleteNode(5,nota,nombre,semestres,carrera) == -1)
+        cout << "Valores no adecuador para eliminar nodos" << endl;
+    else {
+        cout << "Se elimino correctamente a: " << nombre << ": " << nota << " Semestre: " << semestres << " Carrera: " << carrera;
+        lista.display();
+    }
+    cout << "La lista despues de insertar el elemento" << endl;*/
+    //lista.display();
+    return 0;
+}
+//Julio Cesar Roca Alba
